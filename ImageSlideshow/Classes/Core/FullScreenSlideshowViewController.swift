@@ -97,6 +97,10 @@ open class FullScreenSlideshowViewController: UIViewController {
 
         // Prevents broken dismiss transition when image is zoomed in
         slideshow.currentSlideshowItem?.zoomOut()
+        
+        UIView.setAnimationsEnabled(false)
+        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+        UIView.setAnimationsEnabled(true)
     }
 
     open override func viewDidLayoutSubviews() {
