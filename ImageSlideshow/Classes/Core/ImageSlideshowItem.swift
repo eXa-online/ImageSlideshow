@@ -35,6 +35,7 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
     fileprivate var lastFrame = CGRect.zero
     fileprivate var imageReleased = false
     fileprivate var isLoading = false
+    fileprivate var dynamicScaleMode: UIViewDynamicContentMode?
     fileprivate var singleTapGestureRecognizer: UITapGestureRecognizer?
     fileprivate var loadFailed = false {
         didSet {
@@ -134,7 +135,7 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
     }
 
     /// Request to load Image Source to Image View
-    public func loadImage() {
+    public func loadImage(dynamicScaleMode: UIViewDynamicContentMode?) {
         if self.imageView.image == nil && !isLoading {
             isLoading = true
             imageReleased = false
@@ -144,6 +145,14 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
                 if let imageRelease = self?.imageReleased, imageRelease {
                     self?.imageView.image = nil
                 } else {
+                    self?.dynamicScaleMode = dynamicScaleMode
+                    if let dynamicScaleModeSet = self?.dynamicScaleMode, let imageSize = image?.size {
+                        if dynamicScaleModeSet == UIViewDynamicContentMode.landscapeFit {
+                            self?.imageView.contentMode = imageSize.height > imageSize.width ? .scaleAspectFit : .scaleAspectFill
+                        } else if dynamicScaleModeSet == UIViewDynamicContentMode.portraitFit {
+                            self?.imageView.contentMode = imageSize.height < imageSize.width ? .scaleAspectFit : .scaleAspectFill
+                        }
+                    }
                     self?.imageView.image = image
                 }
                 self?.activityIndicator?.hide()
@@ -166,7 +175,7 @@ open class ImageSlideshowItem: UIScrollView, UIScrollViewDelegate {
     }
 
     func retryLoadImage() {
-        self.loadImage()
+        self.loadImage(dynamicScaleMode: self.dynamicScaleMode)
     }
 
     // MARK: - Image zoom & size

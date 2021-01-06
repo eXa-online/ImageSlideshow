@@ -7,6 +7,14 @@
 
 import UIKit
 
+
+public enum UIViewDynamicContentMode : Int {
+
+    case landscapeFit = 13
+    
+    case portraitFit = 14
+}
+
 @objc
 /// The delegate protocol informing about image slideshow state changes
 public protocol ImageSlideshowDelegate: class {
@@ -207,6 +215,8 @@ open class ImageSlideshow: UIView {
         }
     }
 
+    open var dynamicContentScaleMode: UIViewDynamicContentMode?
+        
     fileprivate var slideshowTimer: Timer?
     fileprivate var scrollViewImages = [InputSource]()
     fileprivate var isAnimating: Bool = false
@@ -347,14 +357,14 @@ open class ImageSlideshow: UIView {
             let item = slideshowItems[i]
             switch preload {
             case .all:
-                item.loadImage()
+                item.loadImage(dynamicScaleMode: self.dynamicContentScaleMode)
             case .fixed(let offset):
                 // if circular scrolling is enabled and image is on the edge, a helper ("dummy") image on the other side needs to be loaded too
                 let circularEdgeLoad = circular && ((scrollViewPage == 0 && i == totalCount-3) || (scrollViewPage == 0 && i == totalCount-2) || (scrollViewPage == totalCount-2 && i == 1))
 
                 // load image if page is in range of loadOffset, else release image
                 let shouldLoad = abs(scrollViewPage-i) <= offset || abs(scrollViewPage-i) > totalCount-offset || circularEdgeLoad
-                shouldLoad ? item.loadImage() : item.releaseImage()
+                shouldLoad ? item.loadImage(dynamicScaleMode: self.dynamicContentScaleMode) : item.releaseImage()
             }
         }
     }

@@ -28,7 +28,7 @@ class ViewController: UIViewController {
 
         slideshow.slideshowInterval = 5.0
         slideshow.pageIndicatorPosition = .init(horizontal: .center, vertical: .under)
-        slideshow.contentScaleMode = UIViewContentMode.scaleAspectFill
+        slideshow.dynamicContentScaleMode = .landscapeFit
 
         slideshow.pageIndicator = UIPageControl.withSlideshowColors()
 
@@ -37,7 +37,7 @@ class ViewController: UIViewController {
         slideshow.delegate = self
 
         // can be used with other sample sources as `afNetworkingSource`, `alamofireSource` or `sdWebImageSource` or `kingfisherSource`
-        slideshow.setImageInputs(localSource)
+        slideshow.setImageInputs(alamofireSource)
 
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.didTap))
         slideshow.addGestureRecognizer(recognizer)
